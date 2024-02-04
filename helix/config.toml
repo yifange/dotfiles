@@ -1,7 +1,15 @@
-theme = "gruvbox"
+theme = "ayu_dark"
 
 [editor.cursor-shape]
 insert = "bar"
 normal = "block"
 select = "underline"
 
+[editor]
+color-modes = true
+bufferline = "multiple"
+
+[keys.normal]
+"C-." = "code_action"
+X = "extend_line_above"
+D = "delete_char_backward"

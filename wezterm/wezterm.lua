@@ -1,6 +1,7 @@
 -- Pull in the wezterm API
 local wezterm = require("wezterm")
 local act = wezterm.action
+local mux = wezterm.mux
 
 -- This table will hold the configuration.
 local config = {}
@@ -11,19 +12,44 @@ if wezterm.config_builder then
 	config = wezterm.config_builder()
 end
 
+wezterm.on("gui-startup", function()
+	local tab, pane, window = mux.spawn_window({})
+	window:gui_window():maximize()
+end)
+
 config.font = wezterm.font("FiraCode Nerd Font")
-config.font_size = 12
+config.font_size = 18
 config.line_height = 1.2
+config.window_decorations = "TITLE|RESIZE"
+config.hide_tab_bar_if_only_one_tab = true
+config.window_frame = {
+	font = wezterm.font({ family = "FiraCode Nerd Font", weight = "Regular" }),
+}
+config.window_padding = {
+	left = "0",
+	right = "0",
+	top = "0",
+	bottom = "0",
+}
+config.tab_max_width = 32
+config.use_fancy_tab_bar = false
+config.tab_bar_at_bottom = true
+config.unzoom_on_switch_pane = true
+config.adjust_window_size_when_changing_font_size = false
+config.window_background_opacity = 0.95
 
 -- This is where you actually apply your config choices
 
 -- For example, changing the color scheme:
-config.color_scheme = "Catppuccin Mocha"
+-- config.color_scheme = "Catppuccin Mocha"
+config.color_scheme = "Ocean (dark) (terminal.sexy)"
 
 config.use_dead_keys = false
 config.scrollback_lines = 5000
 
 config.disable_default_key_bindings = true
+config.native_macos_fullscreen_mode = true
+
 config.keys = {
 	{ key = "]", mods = "CTRL|SUPER", action = act.ActivateTabRelative(1) },
 	{ key = "[", mods = "CTRL|SUPER", action = act.ActivateTabRelative(-1) },
@@ -39,8 +65,8 @@ config.keys = {
 	{ key = "7", mods = "CTRL|SUPER", action = act.ActivateTab(6) },
 	{ key = "8", mods = "CTRL|SUPER", action = act.ActivateTab(7) },
 	{ key = "9", mods = "CTRL|SUPER", action = act.ActivateTab(8) },
-	{ key = 'v', mods = "CTRL|SUPER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
-	{ key = '-', mods = "CTRL|SUPER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "v", mods = "CTRL|SUPER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
+	{ key = "-", mods = "CTRL|SUPER", action = act.SplitVertical({ domain = "CurrentPaneDomain" }) },
 	{ key = "s", mods = "CTRL|SUPER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 	{ key = "/", mods = "CTRL|SUPER", action = act.SplitHorizontal({ domain = "CurrentPaneDomain" }) },
 	{ key = "-", mods = "SUPER", action = act.DecreaseFontSize },
@@ -50,19 +76,23 @@ config.keys = {
 
 	{ key = "f", mods = "SUPER", action = act.Search("CurrentSelectionOrEmptyString") },
 	{ key = "!", mods = "SUPER", action = act.ShowDebugOverlay },
-	{ key = "m", mods = "SUPER", action = act.Hide },
+	-- { key = "m", mods = "SUPER", action = act.Hide },
 	{ key = "p", mods = "SUPER", action = act.ActivateCommandPalette },
 	{ key = "q", mods = "SUPER", action = act.QuitApplication },
 	{ key = "r", mods = "SUPER", action = act.ReloadConfiguration },
 	{ key = "t", mods = "SUPER", action = act.SpawnTab("CurrentPaneDomain") },
+	{ key = "t", mods = "CTRL|SUPER", action = act.SpawnTab("CurrentPaneDomain") },
 	{ key = "n", mods = "SUPER", action = act.SpawnWindow },
+	{ key = "n", mods = "CTRL|SUPER", action = act.SpawnWindow },
+	{ key = "w", mods = "SUPER", action = act.CloseCurrentTab({ confirm = true }) },
+	{ key = "w", mods = "CTRL|SUPER", action = act.CloseCurrentTab({ confirm = true }) },
 	{
 		key = "u",
 		mods = "CTRL|SUPER",
 		action = act.CharSelect({ copy_on_select = true, copy_to = "ClipboardAndPrimarySelection" }),
 	},
 	{ key = "x", mods = "CTRL|SUPER", action = act.ActivateCopyMode },
-	{ key = "z", mods = "CTRL|SUPER", action = act.TogglePaneZoomState },
+	{ key = "m", mods = "CTRL|SUPER", action = act.TogglePaneZoomState },
 
 	{ key = "c", mods = "SUPER", action = act.CopyTo("Clipboard") },
 	{ key = "v", mods = "SUPER", action = act.PasteFrom("Clipboard") },
@@ -73,16 +103,35 @@ config.keys = {
 	{ key = "PageDown", mods = "SHIFT", action = act.ScrollByPage(1) },
 
 	{ key = "h", mods = "CTRL|SUPER", action = act.ActivatePaneDirection("Left") },
-  { key = "LeftArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Left", 1 }) },
 	{ key = "l", mods = "CTRL|SUPER", action = act.ActivatePaneDirection("Right") },
-  { key = "RightArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Right", 1 }) },
 	{ key = "k", mods = "CTRL|SUPER", action = act.ActivatePaneDirection("Up") },
-	{ key = "UpArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Up", 1 }) },
 	{ key = "j", mods = "CTRL|SUPER", action = act.ActivatePaneDirection("Down") },
-	{ key = "DownArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Down", 1 }) },
+	{ key = "LeftArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Left", 10 }) },
+	{ key = "RightArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Right", 10 }) },
+	{ key = "UpArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Up", 10 }) },
+	{ key = "DownArrow", mods = "CTRL|SUPER", action = act.AdjustPaneSize({ "Down", 10 }) },
+	{ key = "LeftArrow", mods = "CTRL|SHIFT|SUPER", action = act.AdjustPaneSize({ "Left", 1 }) },
+	{ key = "RightArrow", mods = "CTRL|SHIFT|SUPER", action = act.AdjustPaneSize({ "Right", 1 }) },
+	{ key = "UpArrow", mods = "CTRL|SHIFT|SUPER", action = act.AdjustPaneSize({ "Up", 1 }) },
+	{ key = "DownArrow", mods = "CTRL|SHIFT|SUPER", action = act.AdjustPaneSize({ "Down", 1 }) },
 	{ key = "c", mods = "CTRL|SUPER", action = act.CloseCurrentPane({ confirm = false }) },
 	{ key = "Copy", mods = "NONE", action = act.CopyTo("Clipboard") },
 	{ key = "Paste", mods = "NONE", action = act.PasteFrom("Clipboard") },
+	{
+		key = "e",
+		mods = "CTRL|SUPER",
+		action = act.PromptInputLine({
+			description = "Enter new name for tab",
+			action = wezterm.action_callback(function(window, pane, line)
+				-- line will be `nil` if they hit escape without entering anything
+				-- An empty string if they just hit enter
+				-- Or the actual line of text they wrote
+				if line then
+					window:active_tab():set_title(line)
+				end
+			end),
+		}),
+	},
 }
 
 config.key_tables = {
