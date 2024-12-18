@@ -15,5 +15,19 @@
   },
   "vim_mode": true,
   "ui_font_size": 16,
-  "buffer_font_size": 16
+  "buffer_font_size": 16,
+  "language_overrides": {
+    "TypeScript": {
+      "tab_size": 4
+    },
+    "JavaScript": {
+      "tab_size": 4
+    },
+    "TSX": {
+      "tab_size": 4
+    },
+    "JSX": {
+      "tab_size": 4
+    }
+  }
 }

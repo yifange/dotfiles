@@ -1,4 +1,4 @@
-theme = "ayu_dark"
+theme = "nightfox"
 
 [editor.cursor-shape]
 insert = "bar"
@@ -10,6 +10,31 @@ color-modes = true
 bufferline = "multiple"
 
 [keys.normal]
-"C-." = "code_action"
-X = "extend_line_above"
+# "C-." = "code_action"
+"G" = "goto_last_line"
+# X = "extend_line_above"
 D = "delete_char_backward"
+Z = { Q = ":quit!", Z = ":x" } 
+"C-j" = "jump_view_down"
+"C-k" = "jump_view_up"
+"C-h" = "jump_view_left"
+"C-l" = "jump_view_right"
+"C-r" = ":reload-all"
+"V" = ["select_mode", "extend_to_line_bounds"]
+"C-s" = ":w"
+"space" = { "m" = "save_selection", "space" = "file_picker" }
+
+[keys.select]
+"V" = "extend_to_line_bounds"
+"G" = "goto_last_line"
+
+[keys.normal.g]
+t = "goto_next_buffer"
+T = "goto_previous_buffer"
+c = "toggle_comments"
+
+[keys.normal."C-w"]
+"/" = "vsplit"
+"C-/" = "vsplit"
+"minus" = "hsplit"
+"C-minus" = "hsplit"

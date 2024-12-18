@@ -1,9 +1,99 @@
-#[[language]]
-#name = "typescript"
-#indent = { tab-width = 4, unit = "    " }
+# [language-server.efm]
+# command = "efm-langserver"
 
-# [[language]]
-# name = "javascript"
+[language-server.eslint]
+args = ["--stdio"] # should come by def with helix
+command = "vscode-eslint-language-server"
+
+[language-server.eslint.config]
+format = true
+validate = "on" # I assume this enabled eslit to validate the file, which now shows me counts for errors, warnings, etc in helix
+experimental = { useFlatConfig = false } # not sure why this is here
+rulesCustomizations = []
+run = "onType"
+problems = { shortenToSingleLine = false }
+nodePath = "" # seems redundant, why do we need to override this, should get detected autom.
+
+[language-server.eslint.config.codeAction]
+[language-server.eslint.config.codeAction.disableRuleComment]
+enable = true
+location = "separateLine"
+
+[language-server.eslint.config.codeAction.showDocumentation]
+enable = true # why?
+
+[language-server.eslint.config.codeActionOnSave]
+enable = true
+mode = "fixAll"
+
+[language-server.eslint.config.workingDirectory]
+mode = "location" # do we need to override this?
+
+[language-server.typescript-language-server.config]
+documentFormatting = false # use eslint instead, do we have to override this ourselves? I think if eslint LSP is detected and enabled, this should be done automatically for us as generally everyone lets eslint take over linting+prettying, which uses prettier by default if detected by it
+
+[[language]]
+name = "typescript"
+language-servers = [
+  # { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "typescript-language-server", except-features = [ "format" ] },
+  "eslint"
+]
+formatter = { command = "prettier", args = ["--parser", "typescript", "--tab-width", "4"] }
+# formatter = { command = "prettier" }
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+
+
+[[language]]
+name = "javascript"
+language-servers = [
+  # { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "typescript-language-server", except-features = [ "format" ] },
+  "eslint"
+]
+# formatter = { command = "prettier", args = ["--parser", "typescript"] }
+# formatter = { command = "prettier" }
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "jsx"
+language-servers = [
+  # { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "typescript-language-server", except-features = [ "format" ] },
+  "eslint"
+]
+formatter = { command = "prettier", args = ["--parser", "typescript", "--tab-width", "4"] }
+# formatter = { command = "prettier" }
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "tsx"
+language-servers = [
+  # { name = "efm", only-features = [ "diagnostics", "format" ] },
+  { name = "typescript-language-server", except-features = [ "format" ] },
+  "eslint"
+]
+formatter = { command = "prettier", args = ["--parser", "typescript", "--tab-width", "4"] }
+# formatter = { command = "prettier" }
+# formatter = { command = "prettier" }
+auto-format = true
+indent = { tab-width = 4, unit = "    " }
+
+[[language]]
+name = "html"
+formatter = { command = 'prettier', args = ["--parser", "html"] }
+
+[[language]]
+name = "json"
+formatter = { command = 'prettier', args = ["--parser", "json"] }
+
+[[language]]
+name = "css"
+formatter = { command = 'prettier', args = ["--parser", "css"] }
+
 # scope = "source.js"
 # injection-regex = "^(js|javascript)$"
 # file-types = ["js", "jsx", "mjs"]
@@ -12,6 +102,7 @@
 # comment-token = "//"
 # config = { enable = true, lint = true, unstable = true }
 # language-server = { command = "deno", args = ["lsp"], language-id = "javascript" }
+# language-servers = [ "typescript-language-server", "eslint" ]
 # indent = { tab-width = 4, unit = "    " }
 
 # [[language]]
@@ -24,6 +115,7 @@
 # comment-token = "//"
 # config = { enable = true, lint = true, unstable = true }
 # language-server = { command = "deno", args = ["lsp"], language-id = "javascriptreact" }
+# language-servers = [ "typescript-language-server", "eslint" ]
 # indent = { tab-width = 4, unit = "    " }
 # grammar = "javascript"
 
@@ -47,4 +139,5 @@
 # roots = ["deno.json", "package.json", "tsconfig.json"]
 # config = { enable = true, lint = true, unstable = true }
 # language-server = { command = "deno", args = ["lsp"], language-id = "typescriptreact" }
+# language-servers = [ "typescript-language-server", "eslint" ]
 # indent = { tab-width = 4, unit = "    " }
